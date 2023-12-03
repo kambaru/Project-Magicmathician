@@ -9,13 +9,13 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] HealthBar hpBar;
-    [SerializeField] float health, maxHealth = 3f;
+    [SerializeField] int health, maxHealth = 100;
     public Transform target;
 
     public void TakeDamage(int damage)
     {
         health -= damage;
-        hpBar.UpdateHealthBar(health, maxHealth);
+        hpBar.SetHealthBar(health);
         if (health <= 0)
         {
             Destroy(gameObject);
@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         health = maxHealth;
-        hpBar.UpdateHealthBar(health, maxHealth);
+        hpBar.SetHealthBar(health);
     }
 
 }

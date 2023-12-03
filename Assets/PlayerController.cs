@@ -5,20 +5,27 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+    public HealthBar healthBar;
     public float attackRange = 2f;
     public int baseAttackDamage = 10;
     public float maxResponseTime = 3f;
+    [SerializeField] int maxHealth = 100;
+    [SerializeField] int currentHealth;
+    
 
     public LayerMask enemyLayer;
     public TMP_Text questionText;
-     public TMP_InputField answerText;
+    public TMP_InputField answerText;
 
-    private string correctAnswer;
+    private int correctAnswer;
     private float responseTime;
     private bool isAttacking;
 
     void Start()
     {
+        currentHealth = maxHealth;
+        healthBar.SetHealthBar(maxHealth);
+        Debug.Log("Start Function: Player health: " + currentHealth);
         answerText.onEndEdit.AddListener(delegate { SubmitAnswer(); });
         Attack();
     }
@@ -26,6 +33,7 @@ public class PlayerController : MonoBehaviour
     //Attack to damage the enemy
     public void Attack()
     {
+        Debug.Log("Attack Function Started");
         if (!isAttacking)
         {
             int num1 = Random.Range(1, 10);
@@ -33,7 +41,7 @@ public class PlayerController : MonoBehaviour
             int result = num1 * num2;
 
             questionText.text = $"{num1} x {num2} = ?";
-            correctAnswer = result.ToString();
+            correctAnswer = result;
 
             answerText.text = string.Empty;
 
@@ -49,20 +57,22 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(maxResponseTime);
 
+        Debug.Log("CoRoutine Function Started");
+
         if (isAttacking)
         {
             questionText.text = string.Empty;
             isAttacking = false;
-            
         	Attack();
         }
 
         if (responseTime <= maxResponseTime)
         {
             // Check if the player's answer is correct
-            string playerAnswer = Input.inputString.Trim();
+            string playerAnswer = answerText.text.Trim();
+            int intAnswer = ConvertToInt(playerAnswer);
             Debug.Log(playerAnswer);
-            if (playerAnswer == correctAnswer)
+            if (intAnswer == correctAnswer)
             {
                 float damageMultiplier = 1f - (responseTime / maxResponseTime);
                 int attackDamage = Mathf.RoundToInt(baseAttackDamage * damageMultiplier);
@@ -109,8 +119,11 @@ public class PlayerController : MonoBehaviour
     {
         if (responseTime <= maxResponseTime)
         {
+            Debug.Log("Answer Function Started");
             string playerAnswer = answerText.text.Trim();
-            if (playerAnswer == correctAnswer)
+            Debug.Log("Answer: " + playerAnswer);
+            int intAnswer = ConvertToInt(playerAnswer);
+            if (intAnswer == correctAnswer)
             {
                 Debug.Log("Player answer: " + playerAnswer + ", Correct");
                 float damageMultiplier = 1f - (responseTime / maxResponseTime);
@@ -146,5 +159,31 @@ public class PlayerController : MonoBehaviour
             responseTime += Time.deltaTime;
             yield return null;
         }
+    }
+
+    void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        healthBar.SetHealthBar(currentHealth);
+        Debug.Log("Player takes " + damage + " damage. Current health: " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            Debug.Log("Player is dead");
+        }
+    }
+
+    int ConvertToInt(string answer)
+    {
+        Debug.Log(answer);
+        if (int.TryParse(answer, out int intValue))
+        {
+            Debug.Log("Converted Integer: " + intValue);
+            return (intValue);
+        }
+        else
+        {
+            Debug.LogError("Input string is not a valid integer");
+        }
+        return 0;
     }
 }
