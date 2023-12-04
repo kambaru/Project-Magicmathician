@@ -8,29 +8,24 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] HealthBar hpBar;
-    [SerializeField] int health, maxHealth = 100;
-    public Transform target;
-
-    public void TakeDamage(int damage)
-    {
-        health -= damage;
-        hpBar.SetHealthBar(health);
-        if (health <= 0)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    private void Awake()
-    {
-        hpBar = GetComponentInChildren<HealthBar>();
-    }
+    public HealthBar hpBar;
+    [SerializeField] int currentHealth; 
+    
+    [SerializeField] int maxHealth = 100;
 
     private void Start()
     {
-        health = maxHealth;
-        hpBar.SetHealthBar(health);
+        currentHealth = maxHealth;
+        hpBar.SetHealthBar(currentHealth);
+    }
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        hpBar.SetHealthBar(currentHealth);
+        if (currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
 }
