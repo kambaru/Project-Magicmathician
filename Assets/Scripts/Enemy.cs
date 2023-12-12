@@ -18,9 +18,18 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
         hpBar.SetHealthBar(currentHealth);
     }
+
+    private void Update()
+    {
+        UnityEngine.Debug.Log("Enemy Update");
+        TakeDamage(0);
+        hpBar.SetHealthBar(currentHealth);
+    }
+
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        UnityEngine.Debug.Log("Enemy takes " + damage + " damage. Current health: " + currentHealth);
+        currentHealth = currentHealth - damage;
         hpBar.SetHealthBar(currentHealth);
         if (currentHealth <= 0)
         {
@@ -29,4 +38,3 @@ public class Enemy : MonoBehaviour
     }
 
 }
-

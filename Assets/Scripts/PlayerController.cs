@@ -13,22 +13,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int currentHealth;
     public QuestionGenerate questionGenerator;
     public LayerMask enemyLayer;
+    //public Enemy enemy;
     private float responseTime;
     private bool isAttacking;
-    private bool answerSubmitted = false;
+    public bool answerSubmitted = false;
 
     void Start()
     {
         currentHealth = maxHealth;
         healthBar.SetHealthBar(maxHealth);
-        Debug.Log("Start Function: Player health: " + currentHealth);
+        UnityEngine.Debug.Log("Start Function: Player health: " + currentHealth);
         Attack();
     }
 
     //Attack to damage the enemy
     public void Attack()
     {
-        Debug.Log("Attack Function Started");
+        UnityEngine.Debug.Log("Attack Function Started");
         if (!isAttacking)
         {
             questionGenerator.GenerateQuestion();
@@ -41,60 +42,30 @@ public class PlayerController : MonoBehaviour
     private IEnumerator AttackCoroutine()
     {
         isAttacking = true;
-        responseTime = 0f;
 
-        yield return new WaitForSecondsRealtime(maxResponseTime);
-
-        Debug.Log("CoRoutine Function Started");
-
-        if(!answerSubmitted)
+        // This while loop will hold the coroutine here until the player submits an answer
+        while (!answerSubmitted)
         {
-            yield break;
-        }
-        
-        if (isAttacking)
-        {
-            isAttacking = false;
-        	Attack();
+            yield return null; // Ensures the coroutine will resume on the next frame
         }
 
-        if (responseTime <= maxResponseTime)
-        {
-            // Check if the player's answer is correct
-            if (questionGenerator.CheckAnswer())
-            {
-                Debug.Log("Correct answer: attacking enemy");
-                float damageMultiplier = 1f - (responseTime / maxResponseTime);
-                int attackDamage = Mathf.RoundToInt(baseAttackDamage * damageMultiplier);
+        // At this point the coroutine will only advance past the while loop when the player has submitted an answer
+        UnityEngine.Debug.Log("Answer submitted, checking answer...");
 
-                Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, attackRange, enemyLayer);
-
-                foreach (Collider2D enemy in enemies)
-                {
-                    Enemy enemyController = enemy.GetComponent<Enemy>();
-                    if (enemyController != null)
-                    {
-                        enemyController.TakeDamage(attackDamage);
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log("Wrong answer");
-                TakeDamage(10);
-            }
-        }
+        questionGenerator.SubmitAnswer();
 
         // Reset variables
         isAttacking = false;
+        answerSubmitted = false;
 
+        // Starts the next attack
         Attack();
     }
-
+   
     // Update is called once per frame
     private void Update()
     {
-        Debug.Log("Update");
+        UnityEngine.Debug.Log("Update");
         if (isAttacking)
         {
             responseTime += Time.deltaTime;
@@ -109,12 +80,9 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator ResponseTimeStopWatch()
     {
-        isAttacking = true;
-        responseTime = 0f;
 
-        while ((isAttacking) && (answerSubmitted))
+        while (!answerSubmitted)
         {
-            responseTime += Time.deltaTime;
             yield return null;
         }
     }
@@ -123,7 +91,7 @@ public class PlayerController : MonoBehaviour
     {
         currentHealth -= damage;
         healthBar.SetHealthBar(currentHealth);
-        Debug.Log("Player health: " + currentHealth);
+        UnityEngine.Debug.Log("Player health: " + currentHealth);
         if (currentHealth <= 0)
         {
             Destroy(gameObject);

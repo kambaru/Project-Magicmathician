@@ -14,4 +14,3 @@ public class HealthBar : MonoBehaviour
 
     
 }
-

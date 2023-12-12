@@ -10,6 +10,7 @@ public class QuestionGenerate : MonoBehaviour
     public Enemy enemy;
     private int correctAnswer;
 
+
     // Call this method to generate a new question
     public void GenerateQuestion()
     {
@@ -21,35 +22,29 @@ public class QuestionGenerate : MonoBehaviour
         answerText.text = string.Empty;
     }
 
-    // Call this method to check the player's answer
-    public bool CheckAnswer()
-    {
-        string playerAnswer = answerText.text.Trim();
-        int intAnswer = ConvertToInt(playerAnswer);
-        return intAnswer == correctAnswer;
-    }
-
     public void SubmitAnswer()
-    {   
+    {
+        
         string playerAnswer = answerText.text.Trim();
 
         if (string.IsNullOrEmpty(playerAnswer))
         {
             return;
         }
-        int intAnswer = ConvertToInt(playerAnswer);
+
+        //int intAnswer = ConvertToInt(playerAnswer);
 
         if ((playerController.GetCurrentHealth() > 0) | (!playerController.GetIsAttacking()))
         {
-            if (intAnswer == correctAnswer)
+            if (playerAnswer == correctAnswer.ToString())
             {
-                Debug.Log("Correct Answer");
-                enemy.TakeDamage(20);
-                //playerController.Attack();
+                Debug.Log(playerAnswer + " is the correct answer");
+                enemy.TakeDamage(10);
+                playerController.Attack();
             }
             else
             {
-                Debug.Log("Wrong Answer");
+                Debug.Log("Wrong Answer: " + playerAnswer + " is not the same as " + correctAnswer.ToString() +" Question Generator");
                 playerController.TakeDamage(10);
             }
             GenerateQuestion();
@@ -59,20 +54,6 @@ public class QuestionGenerate : MonoBehaviour
             Debug.Log("Player is dead");
         }
         
-    }
-
-    // Utility method to convert string to integer
-    private int ConvertToInt(string answer)
-    {
-        if (int.TryParse(answer, out int intValue))
-        {
-            return intValue;
-        }
-        else
-        {
-            Debug.LogError("Input string is not a valid integer");
-        }
-        return 0;
     }
 
     private void Update()
