@@ -39,7 +39,7 @@ public class QuestionGenerate : MonoBehaviour
             if (playerAnswer == correctAnswer.ToString())
             {
                 Debug.Log(playerAnswer + " is the correct answer");
-                enemy.TakeDamage(10);
+                enemy.TakeDamage(playerController.baseAttackDamage, playerController.responseTime);
                 playerController.Attack();
             }
             else

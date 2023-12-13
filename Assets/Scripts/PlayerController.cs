@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     public QuestionGenerate questionGenerator;
     public LayerMask enemyLayer;
     //public Enemy enemy;
-    private float responseTime;
+    public float responseTime;
     private bool isAttacking;
     public bool answerSubmitted = false;
 
@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
         if (isAttacking)
         {
             responseTime += Time.deltaTime;
+
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 questionGenerator.SubmitAnswer();
