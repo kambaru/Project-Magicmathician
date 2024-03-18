@@ -1635,7 +1635,7 @@ GameObject:
   - component: {fileID: 786270579}
   - component: {fileID: 786270578}
   m_Layer: 0
-  m_Name: Shadow
+  m_Name: PlayerShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1984,7 +1984,7 @@ GameObject:
   - component: {fileID: 1054705960}
   - component: {fileID: 1054705959}
   m_Layer: 0
-  m_Name: Shadow (1)
+  m_Name: EnemyShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
