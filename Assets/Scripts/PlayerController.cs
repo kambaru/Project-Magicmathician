@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int currentHealth;
     [SerializeField] int maxMana = 100;
     [SerializeField] int currentMana;
+    public GameObject questionUI;
     public QuestionGenerate questionGenerator;
     public LayerMask enemyLayer;
     //public Enemy enemy;
@@ -28,7 +29,6 @@ public class PlayerController : MonoBehaviour
         healthBar.SetHealthBar(maxHealth);
         manaBar.SetManaBar(maxMana);
         UnityEngine.Debug.Log("Start Function: Player health: " + currentHealth);
-        Attack();
     }
 
     //Attack to damage the enemy
@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
         UnityEngine.Debug.Log("Attack Function Started");
         if (!isAttacking)
         {
+            questionUI.SetActive(true);
             questionGenerator.GenerateQuestion();
             StartCoroutine(ResponseTimeStopWatch());
             StartCoroutine(AttackCoroutine());
@@ -62,9 +63,7 @@ public class PlayerController : MonoBehaviour
         // Reset variables
         isAttacking = false;
         answerSubmitted = false;
-
-        // Starts the next attack
-        Attack();
+        questionUI.SetActive(false);
     }
     
     //Coroutine to handle heal 
@@ -124,6 +123,11 @@ public class PlayerController : MonoBehaviour
     public void OnHealButton()
     {
         StartCoroutine(HealRoutine());
+    }
+
+    public void OnAttackButton()
+    {
+        Attack();
     }
     public int GetCurrentHealth()
     {

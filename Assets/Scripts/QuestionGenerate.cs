@@ -12,6 +12,7 @@ public class QuestionGenerate : MonoBehaviour
 
 
     // Call this method to generate a new question
+    //takes reference from ML
     public void GenerateQuestion()
     {
         int num1 = Random.Range(1, 10);
@@ -39,11 +40,15 @@ public class QuestionGenerate : MonoBehaviour
             if (playerAnswer == correctAnswer.ToString())
             {
                 Debug.Log(playerAnswer + " is the correct answer");
+                //stores this as 1 correct in the player data
+
                 enemy.TakeDamage(playerController.baseAttackDamage, playerController.responseTime);
                 playerController.Attack();
             }
             else
             {
+                //stores this as 1 wrong in the player data
+                
                 Debug.Log("Wrong Answer: " + playerAnswer + " is not the same as " + correctAnswer.ToString() +" Question Generator");
                 playerController.TakeDamage(10);
             }
