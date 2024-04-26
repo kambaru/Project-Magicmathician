@@ -6,11 +6,15 @@ using TMPro;
 public class PlayerController : MonoBehaviour
 {
     public HealthBar healthBar;
+    public ManaBar manaBar;
     public float attackRange = 2f;
     public int baseAttackDamage = 10;
     public float maxResponseTime = 3f;
     [SerializeField] int maxHealth = 100;
     [SerializeField] int currentHealth;
+    [SerializeField] int maxMana = 100;
+    [SerializeField] int currentMana;
+    public GameObject questionUI;
     public QuestionGenerate questionGenerator;
     public LayerMask enemyLayer;
     //public Enemy enemy;
@@ -21,9 +25,10 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        currentMana = maxMana;
         healthBar.SetHealthBar(maxHealth);
+        manaBar.SetManaBar(maxMana);
         UnityEngine.Debug.Log("Start Function: Player health: " + currentHealth);
-        Attack();
     }
 
     //Attack to damage the enemy
@@ -32,6 +37,7 @@ public class PlayerController : MonoBehaviour
         UnityEngine.Debug.Log("Attack Function Started");
         if (!isAttacking)
         {
+            questionUI.SetActive(true);
             questionGenerator.GenerateQuestion();
             StartCoroutine(ResponseTimeStopWatch());
             StartCoroutine(AttackCoroutine());
@@ -57,11 +63,16 @@ public class PlayerController : MonoBehaviour
         // Reset variables
         isAttacking = false;
         answerSubmitted = false;
-
-        // Starts the next attack
-        Attack();
+        questionUI.SetActive(false);
     }
-   
+    
+    //Coroutine to handle heal 
+    private IEnumerator HealRoutine()
+    {
+        Heal(10);
+
+        yield return new WaitForSeconds(2f);
+    }
     // Update is called once per frame
     private void Update()
     {
@@ -99,6 +110,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Heal(int heal)
+    {
+        currentHealth += 10;
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        currentMana -= 10;
+        healthBar.SetHealthBar(currentHealth);
+        manaBar.SetManaBar(currentMana);
+        UnityEngine.Debug.Log("Player health: " + currentHealth);
+    }
+
+    public void OnHealButton()
+    {
+        StartCoroutine(HealRoutine());
+    }
+
+    public void OnAttackButton()
+    {
+        Attack();
+    }
     public int GetCurrentHealth()
     {
         return currentHealth;
