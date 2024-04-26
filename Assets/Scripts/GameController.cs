@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public static GameController gameControl;
+
+    public int score;
+
+    //can put the player stats here?
+    
+    private void Awake(){
+
+        if (gameControl == null) {
+            gameControl = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (gameControl != this){
+            Destroy(gameObject);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
