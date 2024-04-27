@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class NavigationController : MonoBehaviour
 {
-    public void Play()
+    public void Explore()
     {
         SceneManager.LoadSceneAsync("ExplorationMenu");
     }
@@ -23,8 +23,13 @@ public class NavigationController : MonoBehaviour
     }
 
     public void Exit(){
-
+        Application.Quit();
     }
+
+    public void BuffScene(){
+        SceneManager.LoadSceneAsync("UpgradeBuffMenu");
+    }
+
 
     public void Battle(){
         SceneManager.LoadSceneAsync("BattleScene");
@@ -34,11 +39,11 @@ public class NavigationController : MonoBehaviour
         SceneManager.LoadSceneAsync("TreasureScene");
     }
 
-    public void Restart(){
-        SceneManager.LoadSceneAsync("ExplorationMenu");
+    public void ResultsShow(){
+        SceneManager.LoadSceneAsync("ResultsScene");
     }
 
-    public void GameOver(){
-        SceneManager.LoadSceneAsync("GameOver");
+    public void GoHome(){
+        SceneManager.LoadSceneAsync("HomeScene");
     }
 }

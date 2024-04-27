@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask enemyLayer;
     //public Enemy enemy;
     public float responseTime;
-    private bool isAttacking;
+    private bool isAttacking = false;
     public bool answerSubmitted = false;
 
     void Start()
@@ -34,11 +34,12 @@ public class PlayerController : MonoBehaviour
     //Attack to damage the enemy
     public void Attack()
     {
-        UnityEngine.Debug.Log("Attack Function Started");
+        UnityEngine.Debug.Log("Attack Function Started.");
         if (!isAttacking)
         {
             questionUI.SetActive(true);
             questionGenerator.GenerateQuestion();
+
             StartCoroutine(ResponseTimeStopWatch());
             StartCoroutine(AttackCoroutine());
         }
@@ -47,6 +48,7 @@ public class PlayerController : MonoBehaviour
     // Coroutine to handle the attack
     private IEnumerator AttackCoroutine()
     {
+        
         isAttacking = true;
 
         // This while loop will hold the coroutine here until the player submits an answer
@@ -64,12 +66,28 @@ public class PlayerController : MonoBehaviour
         isAttacking = false;
         answerSubmitted = false;
         questionUI.SetActive(false);
+
+        
+
+        //Attack();
     }
     
     //Coroutine to handle heal 
     private IEnumerator HealRoutine()
     {
-        Heal(10);
+        if (currentHealth < maxHealth)
+            {
+                int healing = maxHealth - currentHealth;
+                if (healing < 10)
+                {
+                    Heal(healing);
+                    }
+                else
+                {
+                    Heal(10);
+                    }
+            }
+
 
         yield return new WaitForSeconds(2f);
     }

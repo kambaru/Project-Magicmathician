@@ -23,8 +23,8 @@ public class RandomDoorGenerator : MonoBehaviour
         //each door gets a label
         //set all doors to non-visible
         //only show the correct doors as visible
-        int randInd1 = Random.Range(0, 2);
-        int randInd2 = Random.Range(0, 2);
+        int randInd1 = Random.Range(0, 3);
+        int randInd2 = Random.Range(0, 3);
 
         OpenDoors(randInd1, randInd2);
     }
@@ -38,6 +38,10 @@ public class RandomDoorGenerator : MonoBehaviour
                 break;
 
             case 1:
+                Door1.gameObject.SetActive(true);
+                break;
+
+            case 2:
                 Door11.gameObject.SetActive(true);
                 break;
         }
@@ -48,6 +52,10 @@ public class RandomDoorGenerator : MonoBehaviour
                 break;
 
             case 1: 
+                Door22.gameObject.SetActive(true);
+                break;
+
+            case 2: 
                 Door22.gameObject.SetActive(true);
                 break;
         }

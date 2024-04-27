@@ -9,19 +9,108 @@ public class QuestionGenerate : MonoBehaviour
     public PlayerController playerController;
     public Enemy enemy;
     private int correctAnswer;
+    
+    public GameAI gameAI;
+    private int currentTopic;
 
-
-    // Call this method to generate a new question
-    //takes reference from ML
     public void GenerateQuestion()
     {
-        int num1 = Random.Range(1, 10);
-        int num2 = Random.Range(1, 10);
+        currentTopic = gameAI.GetWeakestTopic();
+
+        switch (currentTopic)
+        {
+            case 0:
+                GenerateAdditionQuestion(1,10);
+                break;
+            case 1:
+                GenerateSubtractionQuestion(false);
+                break;
+            case 2:
+                GenerateMultiplicationQuestion(0,12);
+                break;
+            case 3:
+                GenerateDivisionQuestion();
+                break;
+            /*case 1:
+                GenerateAdditionQuestion(1, 10);
+                break;
+            case 2:
+                GenerateAdditionQuestion(10, 100);
+                break;
+            case 3:
+                GenerateSubtractionQuestion(false);
+                break;
+            case 4:
+                GenerateSubtractionQuestion(true);
+                break;
+            case 5:
+                GenerateMultiplicationQuestion(1, 13);
+                break;
+            case 6:
+                GenerateMultiplicationQuestion(-12, 13);
+                break;
+            case 7:
+                GenerateMixedMultiplicationQuestion();
+                break;
+            case 8:
+                GenerateDivisionQuestion();
+                break;*/
+        }
+    }
+
+    private void GenerateAdditionQuestion(int min, int max)
+    {
+        int num1 = Random.Range(min, max);
+        int num2 = Random.Range(min, max);
+        int result = num1 + num2;
+        questionText.text = $"{num1} + {num2} = ?";
+        correctAnswer = result;
+    }
+
+    private void GenerateSubtractionQuestion(bool allowNegative)
+    {
+        int num1 = Random.Range(1, 100);
+        int num2 = Random.Range(1, 100);
+
+        if (!allowNegative && num2 > num1)
+        {
+            int temp = num1;
+            num1 = num2;
+            num2 = temp;
+        }
+
+        int result = num1 - num2;
+        questionText.text = $"{num1} - {num2} = ?";
+        correctAnswer = result;
+    }
+
+    private void GenerateMultiplicationQuestion(int min, int max)
+    {
+        int num1 = Random.Range(min, max);
+        int num2 = Random.Range(min, max);
         int result = num1 * num2;
         questionText.text = $"{num1} x {num2} = ?";
         correctAnswer = result;
-        answerText.text = string.Empty;
     }
+
+    private void GenerateMixedMultiplicationQuestion()
+    {
+        int num1 = Random.Range(-12, 13);
+        int num2 = Random.Range(-12, 13);
+        int result = num1 * num2;
+        questionText.text = $"{num1} x {num2} = ?";
+        correctAnswer = result;
+    }
+
+    private void GenerateDivisionQuestion()
+    {
+        int num1 = Random.Range(1, 13);
+        int num2 = Random.Range(1, 13);
+        int result = num1 * num2;
+        questionText.text = $"{result} ÷ {num2} = ?";
+        correctAnswer = num1;
+    }
+
 
     public void SubmitAnswer()
     {
@@ -32,27 +121,42 @@ public class QuestionGenerate : MonoBehaviour
         {
             return;
         }
-
+        Debug.Log("The current question is " + questionText.text + " " + correctAnswer + " is the actual answer, " + playerAnswer + " is the correct answer. The current topic is: " + currentTopic);
         //int intAnswer = ConvertToInt(playerAnswer);
 
         if ((playerController.GetCurrentHealth() > 0) | (!playerController.GetIsAttacking()))
         {
+            
+
             if (playerAnswer == correctAnswer.ToString())
             {
                 Debug.Log(playerAnswer + " is the correct answer");
                 //stores this as 1 correct in the player data
 
                 enemy.TakeDamage(playerController.baseAttackDamage, playerController.responseTime);
-                playerController.Attack();
+                gameAI.UpdateCorrectAnswers(currentTopic);
+                enemy.TakeDamage(playerController.baseAttackDamage, playerController.responseTime);
+                gameAI.UpdateTotalQuestions(currentTopic); // Add this line
+                gameAI.UpdateDifficulty(); // Add this line
             }
             else
             {
                 //stores this as 1 wrong in the player data
-                
                 Debug.Log("Wrong Answer: " + playerAnswer + " is not the same as " + correctAnswer.ToString() +" Question Generator");
-                playerController.TakeDamage(10);
+                if ((playerController.GetCurrentHealth() > 0) && (playerController.GetIsAttacking()))
+                {
+                    playerController.TakeDamage(10);
+                }
+                gameAI.UpdateTotalQuestions(currentTopic);
+                gameAI.UpdateDifficulty();
             }
-            GenerateQuestion();
+
+            answerText.text = "";
+            questionText.text = "";
+            playerAnswer = "";
+
+            gameAI.GetCorrectAnswersAndTotalQuestions();
+            //GenerateQuestion();
         }
         else
         {
