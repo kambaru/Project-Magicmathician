@@ -17,12 +17,12 @@ public class RandomDoorGenerator : MonoBehaviour
         AssignDoorsRandomly();
     }
 
+    /* 
+     * Doors are randomly assigned by an integer between 0-2 randomly generated.
+     *
+     */
     void AssignDoorsRandomly()
     {
-        //do random int between 0 and 1
-        //each door gets a label
-        //set all doors to non-visible
-        //only show the correct doors as visible
         int randInd1 = Random.Range(0, 3);
         int randInd2 = Random.Range(0, 3);
 

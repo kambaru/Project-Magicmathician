@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
+using System.IO;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,26 +16,43 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int currentHealth;
     [SerializeField] int maxMana = 100;
     [SerializeField] int currentMana;
+    public int[] buffs;
     public GameObject questionUI;
+    public GameObject messageUI;
+    public TMP_Text hpText;
+    public TMP_Text manaText;
     public QuestionGenerate questionGenerator;
-    public LayerMask enemyLayer;
-    //public Enemy enemy;
+    public Enemy enemy;
     public float responseTime;
     private bool isAttacking = false;
     public bool answerSubmitted = false;
 
+    public bool buffAdded = false;
+    string filePath;
+
     void Start()
     {
+        filePath = Application.persistentDataPath + "/SaveData.json";
+        UnityEngine.Debug.Log("File path in player controller: " + filePath);
         currentHealth = maxHealth;
         currentMana = maxMana;
+        questionGenerator.setMessage("Choose your next move!");
+             
+        messageUI.SetActive(true);
+        
         healthBar.SetHealthBar(maxHealth);
         manaBar.SetManaBar(maxMana);
         UnityEngine.Debug.Log("Start Function: Player health: " + currentHealth);
     }
 
+    
+
     //Attack to damage the enemy
     public void Attack()
     {
+        
+        
+        responseTime = 0f;
         UnityEngine.Debug.Log("Attack Function Started.");
         if (!isAttacking)
         {
@@ -66,8 +85,7 @@ public class PlayerController : MonoBehaviour
         isAttacking = false;
         answerSubmitted = false;
         questionUI.SetActive(false);
-
-        
+      
 
         //Attack();
     }
@@ -75,26 +93,76 @@ public class PlayerController : MonoBehaviour
     //Coroutine to handle heal 
     private IEnumerator HealRoutine()
     {
-        if (currentHealth < maxHealth)
+  
+        questionUI.SetActive(false);
+        if ((currentMana-10) < 0 ){
+            questionGenerator.setMessage("Your mana is empty.\nChoose another option!");
+            isAttacking = false;
+        }
+        else
+        {
+            if (currentHealth < maxHealth)
+                {
+                    int healing = maxHealth - currentHealth;
+                    if (healing < 10)
+                    {
+                        Heal(healing);
+                        }
+                    else
+                    {
+                        Heal(10);
+                        }
+                }
+            else
             {
-                int healing = maxHealth - currentHealth;
-                if (healing < 10)
-                {
-                    Heal(healing);
-                    }
-                else
-                {
-                    Heal(10);
-                    }
+                questionGenerator.setMessage("Your health is full.\nChoose another option!");
+                isAttacking = false;
             }
+        }
 
 
         yield return new WaitForSeconds(2f);
     }
+
+
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public int GetCurrentMana()
+    {
+        return currentMana;
+    }
+
+    public void setManaText(){
+        manaText.text = GetCurrentMana().ToString();
+    }
+
+    public void setHpText(){
+        hpText.text = GetCurrentHealth().ToString();
+    }
+
+
     // Update is called once per frame
     private void Update()
     {
         UnityEngine.Debug.Log("Update");
+        if (!buffAdded)
+        {
+            buffs = questionGenerator.GetBuffs();
+            baseAttackDamage += buffs[0];
+            maxHealth += buffs[1];
+            maxMana += buffs[2];
+            currentHealth = maxHealth;
+            currentMana = maxMana;
+            healthBar.SetHealthBar(maxHealth);
+            manaBar.SetManaBar(maxMana);
+            buffAdded = true;
+        }
+        setHpText();
+        setManaText();
+
         if (isAttacking)
         {
             responseTime += Time.deltaTime;
@@ -124,7 +192,8 @@ public class PlayerController : MonoBehaviour
         UnityEngine.Debug.Log("Player health: " + currentHealth);
         if (currentHealth <= 0)
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            OnPlayerDestroyed();
         }
     }
 
@@ -133,9 +202,33 @@ public class PlayerController : MonoBehaviour
         currentHealth += 10;
         currentHealth = Mathf.Min(currentHealth, maxHealth);
         currentMana -= 10;
+        
         healthBar.SetHealthBar(currentHealth);
         manaBar.SetManaBar(currentMana);
         UnityEngine.Debug.Log("Player health: " + currentHealth);
+        questionGenerator.EnemyAttack();
+        questionGenerator.setMessage("You have healed.\nEnemy has attacked you.\nSelect your next move.");
+    }
+
+    public void OnEnemyDestroyed()
+    {
+        StopAllCoroutines();
+        isAttacking = false;
+        answerSubmitted = false;
+        questionUI.SetActive(false);
+        questionGenerator.GainCoins();
+
+        SceneManager.LoadSceneAsync("ExplorationMenu");
+    }
+
+    public void OnPlayerDestroyed()
+    {
+        StopAllCoroutines();
+        isAttacking = false;
+        answerSubmitted = false;
+        questionUI.SetActive(false);
+
+        SceneManager.LoadSceneAsync("ResultsScene");
     }
 
     public void OnHealButton()
@@ -146,11 +239,9 @@ public class PlayerController : MonoBehaviour
     public void OnAttackButton()
     {
         Attack();
+        questionGenerator.setMessage("ENTER to submit.");
     }
-    public int GetCurrentHealth()
-    {
-        return currentHealth;
-    }
+    
 
     public bool GetIsAttacking()
     {
