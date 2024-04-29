@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
     public HealthBar hpBar;
     public int timeDamage;
+
+    public int attackPower = 5;
+
+    public PlayerController playerController;
     [SerializeField] int currentHealth; 
     
     [SerializeField] int maxHealth = 100;
@@ -28,16 +28,22 @@ public class Enemy : MonoBehaviour
         hpBar.SetHealthBar(currentHealth);
     }
 
-    public void TakeDamage(int damage, float responseTime)
+    public int getAttackPower(){
+        int attack = Random.Range(5, 11);
+        return attack;
+    }
+
+    public int TakeDamage(int damage, float responseTime)
     {
         UnityEngine.Debug.Log("Enemy takes " + damage + " damage. Current health: " + currentHealth);
         UnityEngine.Debug.Log("You took " + responseTime + " seconds.");
-        if (responseTime < 30)
+        int expectedTime = 30;
+        if (responseTime < expectedTime)
         {
-            timeDamage = Mathf.RoundToInt((30 - responseTime) / (30) * (float)damage);
+            timeDamage = Mathf.RoundToInt((expectedTime - responseTime) / (expectedTime) * (float)damage);
         }
         else {
-            timeDamage = damage;
+            timeDamage = 1;
         }
 
         UnityEngine.Debug.Log("Your damage is " + timeDamage);
@@ -46,7 +52,15 @@ public class Enemy : MonoBehaviour
         if (currentHealth <= 0)
         {
             Destroy(gameObject);
+            OnEnemyDestroyed();
         }
+        return timeDamage;
+    }
+
+    public void OnEnemyDestroyed()
+    {
+        playerController.OnEnemyDestroyed();
+        Destroy(gameObject);
     }
 
 }

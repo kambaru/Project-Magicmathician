@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class NavigationController : MonoBehaviour
 {
-    public void Play()
+    public GameObject settingsUI;
+
+    public void Explore()
     {
         SceneManager.LoadSceneAsync("ExplorationMenu");
     }
 
     public void Settings(){
-
+        settingsUI.SetActive(true);
     }
 
     public void NewGame(){
+        SceneManager.LoadSceneAsync("NewPlayerScene");
 
     }
 
@@ -23,8 +28,14 @@ public class NavigationController : MonoBehaviour
     }
 
     public void Exit(){
-
+        Application.Quit();
     }
+
+
+    public void BuffScene(){
+        SceneManager.LoadSceneAsync("UpgradeBuffMenu");
+    }
+
 
     public void Battle(){
         SceneManager.LoadSceneAsync("BattleScene");
@@ -34,11 +45,11 @@ public class NavigationController : MonoBehaviour
         SceneManager.LoadSceneAsync("TreasureScene");
     }
 
-    public void Restart(){
-        SceneManager.LoadSceneAsync("ExplorationMenu");
+    public void ResultsShow(){
+        SceneManager.LoadSceneAsync("ResultsScene");
     }
 
-    public void GameOver(){
-        SceneManager.LoadSceneAsync("GameOver");
+    public void GoHome(){
+        SceneManager.LoadSceneAsync("HomeScene");
     }
 }
