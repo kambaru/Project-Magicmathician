@@ -5,6 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+/* Contains the navigation system which controls where the player
+ * will go upon selecting an option.
+ */
+
 public class NavigationController : MonoBehaviour
 {
     public GameObject settingsUI;
@@ -14,6 +18,7 @@ public class NavigationController : MonoBehaviour
         SceneManager.LoadSceneAsync("ExplorationMenu");
     }
 
+    // shows the settings which were previously disabled
     public void Settings(){
         settingsUI.SetActive(true);
     }
@@ -23,14 +28,10 @@ public class NavigationController : MonoBehaviour
 
     }
 
-    public void LoadGame(){
-
-    }
-
+    // quits the application
     public void Exit(){
         Application.Quit();
     }
-
 
     public void BuffScene(){
         SceneManager.LoadSceneAsync("UpgradeBuffMenu");

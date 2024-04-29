@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-
+// script for allowing the player to earn coins during their runs
 public class TreasureEvent : MonoBehaviour
 {
     public GameAI gameAI;
