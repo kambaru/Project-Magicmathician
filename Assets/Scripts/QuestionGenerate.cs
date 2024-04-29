@@ -18,10 +18,13 @@ public class QuestionGenerate : MonoBehaviour
 
     private string filePath;
     
+    //finds the save file path
     void Start(){
         filePath = Application.persistentDataPath + "/SaveData.json";
         Debug.Log("File path in question generator: " + filePath);
     }
+
+    //generates the questions
     public void GenerateQuestion()
     {
         gameAI.LoadProgress();
@@ -47,18 +50,24 @@ public class QuestionGenerate : MonoBehaviour
         }
     }
 
+    //gets the buffs that are pruchased by the player
     public int[] GetBuffs(){
         gameAI.LoadProgress();
         buffs = gameAI.GetBuffs();
         return buffs;
     }
 
+    //changes the text on screen
     public void setMessage(string message)
     {
         messageText.text = message;
         
     }
 
+    /*
+     * generating  questions based on level for each topic
+     * 
+     */
     private void GenerateAdditionQuestion(int level)
     {
         // level 0: add numbers between 0 and 10

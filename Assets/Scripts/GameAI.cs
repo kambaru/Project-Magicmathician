@@ -174,22 +174,29 @@ public class GameAI : MonoBehaviour
         float[] accuracy = getAccuracy();
         
         float minAcc = accuracy[0];
-        int minTopic = 0;
+        int minTopic;
         List<int> topics = new List<int>();
         topics.Add(0);
 
+        //if the difference in accuracies between topics are within ten percent of each other
+        //they get added to the list of topics for the weakest topics
+        // this algorithm which decides which topics the user is weakest at. The code ensures that all
+        // of the topics which the user are weakest at are added to a list and then randomly gets a topic from
+        // within that list
+    
         for (int i = 1; i < accuracy.Length; i++)
         {
-            if (Mathf.Abs(minAcc - accuracy[i]) <= 0.2)
+            if (Mathf.Abs(minAcc - accuracy[i]) <= 0.05)
             {
-                minAcc = accuracy[i];
-                minTopic = i;
+                if (minAcc > accuracy[i])
+                {
+                    minAcc = accuracy[i];
+                }
                 topics.Add(i);
             }
-            else if (minAcc - accuracy[i] > 0.2)
+            else if (minAcc - accuracy[i] > 0.05)
             {
                 minAcc = accuracy[i];
-                minTopic = i;
                 topics = new List<int>();
                 topics.Add(i);
             }

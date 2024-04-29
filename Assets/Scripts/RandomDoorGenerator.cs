@@ -13,14 +13,10 @@ public class RandomDoorGenerator : MonoBehaviour
 
     void Start()
     {
-        // Randomly assign Battle or Treasure to each door
         AssignDoorsRandomly();
     }
 
-    /* 
-     * Doors are randomly assigned by an integer between 0-2 randomly generated.
-     *
-     */
+    // Doors are randomly assigned by an integer between 0-2 randomly generated.
     void AssignDoorsRandomly()
     {
         int randInd1 = Random.Range(0, 3);
